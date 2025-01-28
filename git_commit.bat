@@ -1,5 +1,5 @@
 @echo off
-title Git Commit Script
+title Git Commit and Push Script
 
 :: Prompt for the repository directory
 set /p repo_dir=Enter the path to your Git repository (leave empty for current directory): 
@@ -40,6 +40,15 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-echo Successfully committed changes!
+:: Push the changes
+echo Pushing changes to remote repository...
+git push
+if %ERRORLEVEL% NEQ 0 (
+    echo An error occurred while pushing changes. Please check your network or remote repository settings.
+    pause
+    exit /b 1
+)
+
+echo Successfully committed and pushed changes!
 pause
 exit /b 0
