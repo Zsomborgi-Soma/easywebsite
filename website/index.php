@@ -11,7 +11,7 @@
         <div class="menu-left">
             <a href="#">Főoldal</a>
             <a href="#">Kártyák</a>
-            <a href="#">craft</a>
+            <a href="./prompt.php">craft</a>
         </div>
         <div class="menu-right">
             <a href="#">Bejelentkezés</a>
@@ -49,5 +49,6 @@
             </div>
         </div>
     </div>
+    
 </body>
 </html>
