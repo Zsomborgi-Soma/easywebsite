@@ -5,13 +5,13 @@ document.getElementById("send-btn").addEventListener("click", async function sen
         alert("Please enter a message!");
         return;
     }
-
+    let sourceHTML = typeof localStorage.getItem("sourceHTML") !== "undefined" ? localStorage.getItem("sourceHTML") : ""
     try {
         // Send request to your backend API
         const response = await fetch("http://localhost:5000/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userInput })
+            body: JSON.stringify({ message: "source code is:" + sourceHTML + "\n the changes to make: " + userInput })
         });
 
         if (!response.ok) {
@@ -23,7 +23,7 @@ document.getElementById("send-btn").addEventListener("click", async function sen
         if (!data.choices || !data.choices[0] || !data.choices[0].message) {
             throw new Error("Invalid response format from server");
         }
-
+        loadOriginalHTML();
         const aiContent = data.choices[0].message.content;
         const textHTML = getHTMLFromText(aiContent);
         const inputArea = `
@@ -31,6 +31,8 @@ document.getElementById("send-btn").addEventListener("click", async function sen
             <input type="text" id="user-input" placeholder="Type your message...">
             <button id="send-btn">Send</button>
         </div>`;
+
+        localStorage.setItem("sourceHTML", textHTML);
         document.body.innerHTML = inputArea
         // Use DOMParser to safely extract AI-generated content
         const parser = new DOMParser();
@@ -80,4 +82,13 @@ function getHTMLFromText(text) {
     let end = text.indexOf("</html>") + 7;
     if (start === -1 || end === -1) return "";
     return text.slice(start, end);
+}
+function loadOriginalHTML(){
+    var hs = document.getElementsByTagName('style');
+    for (var i=0, max = hs.length; i < max; i++) {
+        hs[i].parentNode.removeChild(hs[i]);
+    }
+    
+    document.body.innerHTML =  "";
+
 }
