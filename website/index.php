@@ -22,35 +22,81 @@
         <div class="search-bar">
             <input type="text" id="search" placeholder="Keresés a kártyák között...">
         </div>
+
         <div class="cards-container" id="cards-container">
-            <div class="card">
-                <h3>Kártya 1</h3>
-                <p>Ez az első kártya leírása.</p>
-            </div>
-            <div class="card">
-                <h3>Kártya 2</h3>
-                <p>Ez a második kártya leírása.</p>
-            </div>
-            <div class="card">
-                <h3>Kártya 3</h3>
-                <p>Ez a harmadik kártya leírása.</p>
-            </div>
-            <div class="card">
-                <h3>Kártya 4</h3>
-                <p>Ez a negyedik kártya leírása.</p>
-            </div>
-            <div class="card">
-                <h3>Kártya 5</h3>
-                <p>Ez az ötödik kártya leírása.</p>
-            </div>
-            <div class="card">
-                <h3>Kártya 6</h3>
-                <p>Ez a hatodik kártya leírása.</p>
-            </div>
+            
         </div>
     </div>
+    
     <script>
         localStorage.clear()
+        getData()
+        let options = []
+        console.log(options)
+        
+        
+
+
+
+
+
+        async function getData() {
+        const url = "http://localhost/easywebsite/website/backend/api.php/websites";
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({username: "xd"}),
+            });
+
+            if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+            }
+
+            
+            requestedData = await response.json();
+            counter = 0
+            listing(requestedData)
+            
+        } catch (error) {
+            console.error(error.message);
+        }
+        }
+        
+        function listing(json,counter) {
+            let list = `<div class="cards-container" id="cards-container">`
+            counter = 0
+            json.forEach(element => {
+                options.push(element.code)
+                list +=`
+                <div class="card" >
+                <h3>${element.title}</h3>
+                <p>${element.description}
+                <a href="./prompt.php" id="${counter}">rework this website </a>
+                </p>
+                </div>`
+                counter++
+            });
+            list += `</div>`
+            document.getElementById("cards-container").innerHTML = list
+        }
+        
+        const onClick = (event) => {
+            let clicked = event.srcElement.id
+            if (isInteger(clicked)){
+                localStorage.setItem("sourceHTML", options[clicked])
+            }
+        }
+        window.addEventListener('click', onClick);
+
+        var regInteger = /^-?\d+$/;
+
+        function isInteger( str ) {    
+            return regInteger.test( str );
+        }
+        
     </script>
 </body>
 </html>
