@@ -1,85 +1,78 @@
-document.getElementById("send-btn").addEventListener("click", async () => {
+document.getElementById("send-btn").addEventListener("click", async function sendMessage() {
     const userInput = document.getElementById("user-input").value;
-    
+
     if (!userInput) {
         alert("Please enter a message!");
         return;
     }
 
-    // Send request to your backend API
-    const response = await fetch("http://localhost:5000/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userInput })
-    });
+    try {
+        // Send request to your backend API
+        const response = await fetch("http://localhost:5000/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userInput })
+        });
 
-    const data = await response.json();
-    
-    const originHead = `<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="prompt.css">
-    <title>prompt</title>`
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-    const originBody = `<div class="prompt">
-        <input type="text" id="user-input" placeholder="Type your message...">
-        <button id="send-btn">Send</button>
-    </div>
+        const data = await response.json();
 
-    <div id="response-container"></div>
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+            throw new Error("Invalid response format from server");
+        }
 
-    <script type="module" src="index.js"></script>`
+        const aiContent = data.choices[0].message.content;
 
-    // Display the response in the frontend
-    console.log(data.choices[0].message.content)
-    let body = ``
-    let style = ``
-    let scriptAI = ``
-    let bodydone = false
-    let styledone = false
-    for (let i = 6; i < data.choices[0].message.content.length; i++) {
-        if (data.choices[0].message.content.slice(i-6,i) == "<body>" && bodydone == false){
-            let j = i
-            while (data.choices[0].message.content.slice(j,j+7) != "</body>") {
-                
+        // Use DOMParser to safely extract AI-generated content
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(aiContent, "text/html");
 
-                if (data.choices[0].message.content.slice(j,j+8) == "<script>"){
-                    while (data.choices[0].message.content.slice(j-9,j) != "</script>") {
-                        scriptAI += data.choices[0].message.content[j]
-                        j++
-                    }
-                }
-                body+= data.choices[0].message.content[j]
-                j++
+        // Extract and apply styles
+        const styleTag = doc.querySelector("style");
+        if (styleTag) {
+            const styleElement = document.createElement("style");
+            styleElement.textContent = styleTag.innerHTML;
+            document.head.appendChild(styleElement);
+        }
+
+        // Extract AI-generated body content
+        const bodyContent = doc.body.innerHTML;
+
+        // Preserve the original input and send button
+        const inputArea = `
+            <div class="prompt">
+                <input type="text" id="user-input" placeholder="Type your message...">
+                <button id="send-btn">Send</button>
+            </div>
+            <div id="response-container"></div>
+        `;
+
+        // **Reset page to original structure before injecting new content**
+        document.body.innerHTML = inputArea; // Reset before injecting new response
+        document.getElementById("response-container").innerHTML = bodyContent;
+
+        // Extract and execute scripts properly
+        const scripts = doc.querySelectorAll("script");
+        scripts.forEach((script) => {
+            if (script.innerHTML.includes("browser.")) {
+                console.warn("Skipped script using 'browser.' API, which is not supported.");
+                return; // Skip invalid scripts
             }
-            bodydone = true
-        }
+            const newScript = document.createElement("script");
+            newScript.textContent = script.innerHTML;
+            document.body.appendChild(newScript);
+        });
 
-        if ( i-8 >= 0 && data.choices[0].message.content.slice(i-7,i) == "<style>" && styledone == false){
-            let j = i
-            while (data.choices[0].message.content.slice(j,j+8) != "</style>") {
-                style += data.choices[0].message.content[j]
-                j++
-            }
-            styledone = true
-        }
-        if (styledone == true && bodydone == true){
-            break
-        }
-        
+        // Reattach event listener for the send button
+        document.getElementById("send-btn").addEventListener("click", sendMessage);
+
+        // Clear input field
+        document.getElementById("user-input").value = "";
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong! Check the console for details.");
     }
-    console.log(styledone)
-    console.log(body)
-    console.log(style)
-    console.log(scriptAI)
-    document.body.innerHTML = body + originBody +scriptAI
-    let stylelement = document.createElement("style")
-    stylelement.textContent = style
-    document.head.appendChild(stylelement)
-     
-    //document.getElementById("response-container").innerHTML = `
-    //     <p><strong>AI:</strong> ${data.choices[0].message.content}</p>
-    //`;
-
-    // Clear input field
-    document.getElementById("user-input").value = "";
 });
