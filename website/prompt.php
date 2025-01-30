@@ -15,7 +15,6 @@
         <button id="send-btn">Send</button>
     </div>
 
-    <div id="response-container"></div>
 
     <script type="module" src="index.js"></script>
 </body>

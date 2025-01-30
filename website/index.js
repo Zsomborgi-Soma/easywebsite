@@ -25,10 +25,16 @@ document.getElementById("send-btn").addEventListener("click", async function sen
         }
 
         const aiContent = data.choices[0].message.content;
-
+        const textHTML = getHTMLFromText(aiContent);
+        const inputArea = `
+        <div class="prompt">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-btn">Send</button>
+        </div>`;
+        document.body.innerHTML = inputArea
         // Use DOMParser to safely extract AI-generated content
         const parser = new DOMParser();
-        const doc = parser.parseFromString(aiContent, "text/html");
+        const doc = parser.parseFromString(textHTML, "text/html");
 
         // Extract and apply styles
         const styleTag = doc.querySelector("style");
@@ -41,18 +47,13 @@ document.getElementById("send-btn").addEventListener("click", async function sen
         // Extract AI-generated body content
         const bodyContent = doc.body.innerHTML;
 
-        // Preserve the original input and send button
-        const inputArea = `
-            <div class="prompt">
-                <input type="text" id="user-input" placeholder="Type your message...">
-                <button id="send-btn">Send</button>
-            </div>
-            <div id="response-container"></div>
-        `;
-
-        // **Reset page to original structure before injecting new content**
-        document.body.innerHTML = inputArea; // Reset before injecting new response
-        document.getElementById("response-container").innerHTML = bodyContent;
+        // **Replace only the content, keep the input and send button**
+        const responseContainer = document.getElementById("response-container");
+        if (responseContainer) {
+            responseContainer.innerHTML = bodyContent;
+        } else {
+            document.body.innerHTML += bodyContent;
+        }
 
         // Extract and execute scripts properly
         const scripts = doc.querySelectorAll("script");
@@ -65,10 +66,7 @@ document.getElementById("send-btn").addEventListener("click", async function sen
             newScript.textContent = script.innerHTML;
             document.body.appendChild(newScript);
         });
-
-        // Reattach event listener for the send button
         document.getElementById("send-btn").addEventListener("click", sendMessage);
-
         // Clear input field
         document.getElementById("user-input").value = "";
     } catch (error) {
@@ -76,3 +74,10 @@ document.getElementById("send-btn").addEventListener("click", async function sen
         alert("Something went wrong! Check the console for details.");
     }
 });
+
+function getHTMLFromText(text) {
+    let start = text.indexOf("<html");
+    let end = text.indexOf("</html>") + 7;
+    if (start === -1 || end === -1) return "";
+    return text.slice(start, end);
+}
