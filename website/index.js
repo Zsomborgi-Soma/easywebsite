@@ -1,13 +1,20 @@
-document.getElementById("send-btn").addEventListener("click", async function sendMessage() {
+// Ensure the page loads previously saved AI-generated HTML
+if (localStorage.getItem("sourceHTML")) {
+    window.onload = function () {
+        settingAIHTML(getHTMLFromText(localStorage.getItem("sourceHTML")));
+    };
+}
+
+// Define sendMessage globally
+async function sendMessage() {
     const userInput = document.getElementById("user-input").value;
 
     if (!userInput) {
         alert("Please enter a message!");
         return;
     }
-    let sourceHTML = typeof localStorage.getItem("sourceHTML") !== "undefined" ? localStorage.getItem("sourceHTML") : ""
+    let sourceHTML = localStorage.getItem("sourceHTML") || "";
     try {
-        // Send request to your backend API
         const response = await fetch("http://localhost:5000/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -23,7 +30,9 @@ document.getElementById("send-btn").addEventListener("click", async function sen
         if (!data.choices || !data.choices[0] || !data.choices[0].message) {
             throw new Error("Invalid response format from server");
         }
+
         loadOriginalHTML();
+
         const aiContent = data.choices[0].message.content;
         const textHTML = getHTMLFromText(aiContent);
         const inputArea = `
@@ -33,49 +42,17 @@ document.getElementById("send-btn").addEventListener("click", async function sen
         </div>`;
 
         localStorage.setItem("sourceHTML", textHTML);
-        document.body.innerHTML = inputArea
-        // Use DOMParser to safely extract AI-generated content
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(textHTML, "text/html");
+        document.body.innerHTML = inputArea;
+        settingAIHTML(textHTML);
 
-        // Extract and apply styles
-        const styleTag = doc.querySelector("style");
-        if (styleTag) {
-            const styleElement = document.createElement("style");
-            styleElement.textContent = styleTag.innerHTML;
-            document.head.appendChild(styleElement);
-        }
+        attachSendButtonListener();
 
-        // Extract AI-generated body content
-        const bodyContent = doc.body.innerHTML;
-
-        // **Replace only the content, keep the input and send button**
-        const responseContainer = document.getElementById("response-container");
-        if (responseContainer) {
-            responseContainer.innerHTML = bodyContent;
-        } else {
-            document.body.innerHTML += bodyContent;
-        }
-
-        // Extract and execute scripts properly
-        const scripts = doc.querySelectorAll("script");
-        scripts.forEach((script) => {
-            if (script.innerHTML.includes("browser.")) {
-                console.warn("Skipped script using 'browser.' API, which is not supported.");
-                return; // Skip invalid scripts
-            }
-            const newScript = document.createElement("script");
-            newScript.textContent = script.innerHTML;
-            document.body.appendChild(newScript);
-        });
-        document.getElementById("send-btn").addEventListener("click", sendMessage);
-        // Clear input field
         document.getElementById("user-input").value = "";
     } catch (error) {
         console.error("Error:", error);
         alert("Something went wrong! Check the console for details.");
     }
-});
+}
 
 function getHTMLFromText(text) {
     let start = text.indexOf("<html");
@@ -83,12 +60,66 @@ function getHTMLFromText(text) {
     if (start === -1 || end === -1) return "";
     return text.slice(start, end);
 }
-function loadOriginalHTML(){
-    var hs = document.getElementsByTagName('style');
-    for (var i=0, max = hs.length; i < max; i++) {
-        hs[i].parentNode.removeChild(hs[i]);
-    }
-    
-    document.body.innerHTML =  "";
+
+function removeScriptFromText(text) {
+    let start = text.indexOf("<script");
+    let end = text.indexOf("</script>") + 9;
+    if (start === -1 || end === -1) return "";
+    console.log(text.slice(0, start) + text.slice(end, text.length-1))
+    return text.slice(0, start) + text.slice(end, text.length-1);
 
 }
+
+function loadOriginalHTML() {
+    document.querySelectorAll('style').forEach(style => style.remove());
+    document.body.innerHTML = "";
+    document.querySelectorAll("script").forEach(script => script.remove());
+}
+
+function settingAIHTML(textHTML) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(textHTML, "text/html");
+
+    const styleTag = doc.querySelector("style");
+    if (styleTag) {
+        const styleElement = document.createElement("style");
+        styleElement.textContent = styleTag.innerHTML;
+        document.head.appendChild(styleElement);
+    }
+
+    const bodyContent = doc.body.innerHTML;
+    const responseContainer = document.getElementById("response-container");
+    if (responseContainer) {
+        responseContainer.innerHTML = bodyContent;
+    } else {
+        console.log(doc.body.innerHTML)
+        document.body.innerHTML += removeScriptFromText(bodyContent);
+    }
+    let scriptcounter = 0
+    doc.querySelectorAll("script").forEach((script) => {
+        if (script.innerHTML.includes("browser.")) {
+            console.warn("Skipped script using 'browser.' API, which is not supported.");
+            return;
+        }
+        const newScript = document.createElement("script");
+        newScript.textContent = script.innerHTML;
+        document.body.appendChild(newScript);
+    });
+
+
+    attachSendButtonListener();
+}
+
+function attachSendButtonListener() {
+    setTimeout(() => {
+        const sendBtn = document.getElementById("send-btn");
+        if (sendBtn) {
+            sendBtn.addEventListener("click", sendMessage);
+        } else {
+            console.warn("Send button not found");
+        }
+    }, 100);
+}
+
+// Ensure initial event listener is attached
+document.addEventListener("DOMContentLoaded", attachSendButtonListener);
