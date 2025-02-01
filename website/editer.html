@@ -1,0 +1,33 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Changing Button</title>
+    <style>
+        #colorButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <button id="colorButton">Click me!</button>
+
+    <script>
+        const button = document.getElementById('colorButton');
+        const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A6', '#FFBD33', '#8D33FF'];
+        let currentColorIndex = 0;
+
+        button.addEventListener('click', () => {
+            // Change to the next color in the array
+            button.style.backgroundColor = colors[currentColorIndex];
+            // Update the index to the next color, wrapping around if necessary
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+        });
+    </script>
+</body>
+</html>

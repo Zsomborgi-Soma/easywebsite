@@ -31,7 +31,7 @@ body {
 
 .container {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 20px;
 }
 
@@ -88,4 +88,80 @@ body {
     margin: 0;
     font-size: 14px;
     color: #666;
+}
+
+.prompt {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 150px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    background: #f9f9f9;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+.prompt textarea {
+    width: 100%;
+    height: 180px; /* Adjust height to match one line */
+    font-size: 16px;
+    line-height: 18px; /* Match line-height to height for single line */
+    border: none;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+    background: transparent;
+    padding: 0 10px; /* Reduced padding to ensure proper height */
+    text-align: left;
+    position: absolute;
+    bottom: 0;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+}
+
+.prompt button {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    max-width: 200px;
+    align-self: center;
+}
+
+.prompt button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+object.smallHTML {
+    width: 100%;
+    height: calc(100vh - 60px); /* Takes up full height minus menu bar */
+    display: block;
+
 }

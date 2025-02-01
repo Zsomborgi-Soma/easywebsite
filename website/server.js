@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import OpenAI from "openai";
 import dotenv from "dotenv";
+import fs from "fs";
 
 dotenv.config();
 
@@ -26,4 +27,16 @@ app.post("/api/chat", async (req, res) => {
     }
 });
 
+app.post("/update-html", (req, res) => {
+    const newHTML = req.body.content || "<html><body><h1>Updated Content</h1></body></html>";
+
+    fs.writeFile("editer.html", newHTML, (err) => {
+        if (err) {
+            console.error("Error writing file:", err);
+            res.status(500).send("Error writing file");
+        } else {
+            res.send("File updated successfully");
+        }
+    });
+});
 app.listen(5000, () => console.log("Server running on port 5000"));
