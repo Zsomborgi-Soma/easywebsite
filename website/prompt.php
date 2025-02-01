@@ -15,55 +15,74 @@
         <a href="#">Contact</a>
     </div>
 
-    <div class="container">
-        <object class="smallHTML" type="text/html" data="editer.html" width="100%" height="500px"></object>
-    </div>
 
-    <div class="prompt">
+        <object class="smallHTML" type="text/html" data="editer.html" width="100%" height="500px"></object>
+
+
+    <div id="prompt" class="prompt">
     <div id="bigtext" class="input-container">
         <textarea id="user-input" placeholder="Type your message..."></textarea>
     </div>
-    <button id="send-btn">Send</button>
+    <button id="send-btn" >Send</button>
 </div>
+<button id="up-down" class="toggle-btn">down-up</button>
+
+
+
+
+
 
     <script type="module" src="index.js"></script>
     <script>
-        let rows = 0
-        let focus = false
-        document.getElementById("user-input").addEventListener("input", function() {
-            console.log(focus)
-            if (focus == true){
-                const elem = document.getElementById("bigtext")
-                rows = getTextareaRows(textarea)
-                let calc = 16*rows
-                elem.style.height = calc +"px"
-                document.getElementById("user-input").style.height = calc +"px"
 
-            }
-            else {
-                const elem = document.getElementById("bigtext")
-                elem.style.height = 18 + "px"
-                this.style.height = 18+"px"
-            }
-           
-        })
+    document.addEventListener("DOMContentLoaded", function () {
+    const textarea = document.getElementById("user-input");
+
+    textarea.addEventListener("input", function () {
+            this.style.height = `${this.scrollHeight}px`;
+    });
+
+    textarea.addEventListener("focus", function () {
+         this.style.height = `${this.scrollHeight}px`;
+    });
+
+    textarea.addEventListener("blur", function () {
+        textarea.style.height = "21px";
+    });
+
+    document.getElementById("send-btn").addEventListener("click", function () {
+        textarea.value = "";
+        textarea.style.height = "21px"; 
+    });
+    const prompt = document.getElementById("prompt")
+    const updown = document.getElementById("up-down")
+    let hidden =false
+    updown.addEventListener("click", function (){
         
-        document.getElementById("user-input").addEventListener("focus", function() {
-            focus =true
+        console.log(hidden)
+        if (hidden == false){
+            hidden =true
+            prompt.style.bottom = "-20%"
+            document.body.style.overflow = "hidden"
+            prompt.addEventListener("transitionend", function (elem) {
+            })
             
             
-        });
-        document.getElementById("user-input").addEventListener("blur", function() {
-            focus =false
-            
-            
-        });
-
-        function getTextareaRows(textarea) {
-        const lineHeight = parseFloat(window.getComputedStyle(textarea).lineHeight);
-        return Math.round(textarea.scrollHeight / lineHeight);
         }
+        else{
+            hidden =false
+            prompt.style.bottom = "5%"
+            prompt.addEventListener("transitionend", function (elem) {
+            document.body.style.overflow = "visible"
+            })
+            
+            
+        }
+
         
+    })
+});
+
     </script>
 </body>
 </html>

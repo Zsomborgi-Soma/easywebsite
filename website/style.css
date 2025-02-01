@@ -91,8 +91,8 @@ body {
 }
 
 .prompt {
-    position: absolute;
-    top: 50px;
+    position: fixed;
+    bottom: 5%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
@@ -106,38 +106,40 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: center;
+    transition: all 0.5s ease-in-out;
+    
+}
+.move{
+    transform: translate(-50%, 100%);
 }
 
 .input-container {
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    height: 150px;
-    overflow: hidden;
-    position: relative;
     width: 100%;
-    border-radius: 12px;
     background: #f9f9f9;
+    border-radius: 12px;
     box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 10px;
 }
 
 .prompt textarea {
     width: 100%;
-    height: 180px; /* Adjust height to match one line */
-    font-size: 16px;
-    line-height: 18px; /* Match line-height to height for single line */
+    height: 21px;
+    min-height: 20px;
+    max-height: 200px;
+    font-size: 18px;
     border: none;
     outline: none;
     resize: none;
     overflow: hidden;
     background: transparent;
-    padding: 0 10px; /* Reduced padding to ensure proper height */
-    text-align: left;
-    position: absolute;
-    bottom: 0;
-    border-radius: 8px;
     font-family: Arial, sans-serif;
+    padding: 0;
+    margin: 2px 0px;
+    transition: all 0.2s ease-in-out;
 }
 
 .prompt button {
@@ -152,16 +154,45 @@ body {
     transition: background-color 0.3s ease, transform 0.2s ease;
     width: 100%;
     max-width: 200px;
-    align-self: center;
 }
 
 .prompt button:hover {
     background-color: #0056b3;
     transform: scale(1.05);
 }
+
+
+.prompt button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+.toggle-btn {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.toggle-btn:hover {
+    background-color: #0056b3;
+}
+.prompt.moved {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 0;
+}
+
 object.smallHTML {
     width: 100%;
-    height: calc(100vh - 60px); /* Takes up full height minus menu bar */
+    height: calc(100vh - 60px - 80px); /* Subtracting both menu and input field */
     display: block;
-
+    overflow: hidden;
 }

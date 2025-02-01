@@ -109,7 +109,7 @@
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch');
+                    throw new Error('Data not found for the specified year and round.');
                 }
                 const data = await response.json();
                 renderResults(data);
