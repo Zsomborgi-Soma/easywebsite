@@ -1,0 +1,216 @@
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kártya Kereső</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .menu {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .menu a:hover {
+            color: #ffdd57;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-bar input {
+            width: 80%;
+            max-width: 600px;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        .button-bar {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .option-button {
+            display: inline-block;
+            padding: 8px 15px;
+            font-size: 14px;
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .option-button:hover {
+            background-color: #c0c0c0;
+            transform: scale(1.05);
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #007bff;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <div class="menu-left">
+            <a href="#">Főoldal</a>
+            <a href="#">Kártyák</a>
+            <a href="./prompt.php">Craft</a>
+        </div>
+        <div class="menu-right">
+            <a href="#">Bejelentkezés</a>
+            <a href="#">Regisztráció</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Keresés a kártyák között...">
+        </div>
+
+        <div class="button-bar">
+            <button class="option-button" type="button">Opció 1</button>
+            <button class="option-button" type="button">Opció 2</button>
+            <button class="option-button" type="button">Opció 3</button>
+            <button class="option-button" type="button">Opció 4</button>
+        </div>
+
+        <div class="cards-container" id="cards-container">
+            
+        </div>
+    </div>
+    
+    <script>
+        localStorage.clear();
+        getData();
+        let options = [];
+        console.log(options);
+
+        async function getData() {
+            const url = "http://localhost/easywebsite/website/backend/api.php/websites";
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({username: "xd"}),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                let requestedData = await response.json();
+                console.log(requestedData);
+                listing(requestedData);
+                
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        function listing(json) {
+            let list = `<div class="cards-container" id="cards-container">`;
+            let counter = 0;
+            json.forEach(element => {
+                options.push(element.code);
+                list += `
+                <div class="card">
+                    <h3>${element.title}</h3>
+                    <p>${element.description}
+                    <a href="./prompt.php" id="${counter}">rework this website </a>
+                    </p>
+                    <iframe srcdoc='${element.code}'
+                            width="500" height="300">
+                    </iframe>
+                </div>`;
+                counter++;
+            });
+            list += `</div>`;
+            document.getElementById("cards-container").innerHTML = list;
+        }
+
+        const onClick = (event) => {
+            let clicked = event.srcElement.id;
+            if (isInteger(clicked)){
+                localStorage.setItem("sourceHTML", options[clicked]);
+            }
+        };
+        window.addEventListener('click', onClick);
+
+        const regInteger = /^-?\d+$/;
+
+        function isInteger(str) {    
+            return regInteger.test(str);
+        }
+    </script>
+</body>
+</html>

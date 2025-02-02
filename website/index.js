@@ -1,13 +1,14 @@
 // Define sendMessage globally
 if (localStorage.getItem("sourceHTML")){
     window.onload = () =>{
-
+        document.getElementById("HTMLCode").textContent =  `${localStorage.getItem("sourceHTML")}`
         edit(localStorage.getItem("sourceHTML"))
     }
 }
 else{
     window.onload = () =>{
         localStorage.setItem("sourceHTML","<html><body><h1>This is the basic webpage</h1></body></html>")
+        document.getElementById("HTMLCode").textContent =  `${localStorage.getItem("sourceHTML")}`
         edit("<html><body><h1>This is the basic webpage</h1></body></html>")
     }
 }
@@ -21,6 +22,7 @@ async function sendMessage() {
         return;
     }
     let sourceHTML = localStorage.getItem("sourceHTML") || "";
+    document.getElementById("HTMLCode").textContent =  `${sourceHTML}`
     try {
         const response = await fetch("http://localhost:5000/api/chat", {
             method: "POST",

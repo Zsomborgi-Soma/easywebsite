@@ -36,9 +36,12 @@ body {
 }
 
 .search-bar {
-    margin-bottom: 30px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; 
 }
+
 
 .search-bar input {
     width: 80%;
@@ -55,6 +58,29 @@ body {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.button-bar {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.option-button {
+    display: inline-block;
+    padding: 8px 15px;
+    font-size: 14px;
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.option-button:hover {
+    background-color: #c0c0c0;
+    transform: scale(1.05);
 }
 
 .cards-container {
@@ -88,6 +114,23 @@ body {
     margin: 0;
     font-size: 14px;
     color: #666;
+}
+
+#search-btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#search-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
 .prompt {
@@ -190,9 +233,59 @@ body {
     border-radius: 0;
 }
 
+.showCode {
+    position: fixed;
+    bottom: 10px;
+    right: 1%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.showCode:hover {
+    background-color: #0056b3;
+}
+
+.saveChanges {
+    position: fixed;
+    bottom: 10px;
+    left: 0.5%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.saveChanges:hover {
+    background-color: #0056b3;
+}
+
 object.smallHTML {
     width: 100%;
-    height: calc(100vh - 60px - 80px); /* Subtracting both menu and input field */
+    height: calc(100vh - 60px - 50px); /* Subtracting both menu and input field */
     display: block;
     overflow: hidden;
+}
+.HTMLCode {
+    z-index: 100;
+    width: 30%;
+    right: 0%;
+    top: 45px;
+    color: white;
+    height: calc(100vh - 60px - 50px);
+    position: absolute;
+    display: none;
+    overflow: hidden;
+    background-color: rgba(116, 116, 116,0.3);
+    overflow-y:scroll;
+    resize: none;
+    padding: 0;
+    margin: 0;
+    border: none;
+
 }

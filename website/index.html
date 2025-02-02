@@ -21,8 +21,15 @@
     <div class="container">
         <div class="search-bar">
             <input type="text" id="search" placeholder="Keresés a kártyák között...">
+            <button id="search-btn">🔍 Keresés</button>
         </div>
 
+        <div class="button-bar">
+            <button class="option-button" type="button">Opció 1</button>
+            <button class="option-button" type="button">Opció 2</button>
+            <button class="option-button" type="button">Opció 3</button>
+            <button class="option-button" type="button">Opció 4</button>
+        </div>
         <div class="cards-container" id="cards-container">
             
         </div>
@@ -36,7 +43,24 @@
         
         
 
+        document.getElementById("search-btn").addEventListener("click", function() {
+        let searchTerm = document.getElementById("search").value.toLowerCase();
+        searchCards(searchTerm);
+    });
 
+    function searchCards(term) {
+        let cards = document.querySelectorAll(".card");
+        cards.forEach(card => {
+            let title = card.querySelector("h3").innerText.toLowerCase();
+            let description = card.querySelector("p").innerText.toLowerCase();
+
+            if (title.includes(term) || description.includes(term)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
 
 
 
@@ -58,6 +82,7 @@
             
             requestedData = await response.json();
             counter = 0
+            console.log(requestedData)
             listing(requestedData)
             
         } catch (error) {
@@ -69,13 +94,16 @@
             let list = `<div class="cards-container" id="cards-container">`
             counter = 0
             json.forEach(element => {
-                options.push(element.code)
+                options.push(element)
                 list +=`
-                <div class="card" >
+                <div class="card" ">
                 <h3>${element.title}</h3>
                 <p>${element.description}
                 <a href="./prompt.php" id="${counter}">rework this website </a>
                 </p>
+                <iframe srcdoc='${element.code}'
+                        width="100%" height="300">
+                </iframe>
                 </div>`
                 counter++
             });
@@ -86,7 +114,9 @@
         const onClick = (event) => {
             let clicked = event.srcElement.id
             if (isInteger(clicked)){
-                localStorage.setItem("sourceHTML", options[clicked])
+                localStorage.setItem("sourceHTML", options[clicked].code)
+                localStorage.setItem("stage", options[clicked].stage)
+                localStorage.setItem("websiteID", options[clicked].websiteID)
             }
         }
         window.addEventListener('click', onClick);

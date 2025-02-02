@@ -1,146 +1,127 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1 Data Viewer</title>
+    <title>Restaurant Ordering Site</title>
     <style>
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #f1f1f1;
+            font-family: Arial, sans-serif;
             margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .menu-item {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex-basis: 30%;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .menu-item h3 {
+            color: #333;
+            margin: 15px 0;
+        }
+
+        .order-form {
+            background-color: #fff;
             padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        h1, h2 {
-            color: #ff1801; /* F1 color theme red */
-        }
-        label, input, button {
-            display: block;
-            margin: 10px 0;
-        }
-        input {
+
+        .order-form input,
+        .order-form select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #555;
-            border-radius: 4px;
-            background-color: #2e2e2e;
-            color: #f1f1f1;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
-        button {
-            background-color: #ff1801;
+
+        .order-form button {
+            background-color: #333;
             color: #fff;
-            padding: 10px;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #e01700;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #2e2e2e;
-        }
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #3d3d3d;
-        }
-        th {
-            background-color: #353535;
-            color: #fff;
-            font-weight: bold;
-        }
-        a {
-            color: #ff1801;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        #results {
-            margin-top: 40px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .input-group {
-            margin-bottom: 20px;
         }
     </style>
 </head>
+
 <body>
+
+    <header>
+        <h1>Welcome to Our Restaurant</h1>
+        <p>Order your favorite dishes online!</p>
+    </header>
+
     <div class="container">
-        <h1>F1 Data Viewer</h1>
-        <div class="input-group">
-            <label for="year">Year:</label>
-            <input type="text" id="year" placeholder="e.g., 2023">
-
-            <label for="round">Round (optional):</label>
-            <input type="text" id="round" placeholder="e.g., 1">
-
-            <button onclick="fetchData()">Fetch F1 Data</button>
+        <div class="menu">
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/300" alt="Dish 1">
+                <h3>Dish 1</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/300" alt="Dish 2">
+                <h3>Dish 2</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/300" alt="Dish 3">
+                <h3>Dish 3</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
         </div>
 
-        <h2>Results:</h2>
-        <div id="results"></div>
+        <div class="order-form">
+            <h2>Place Your Order</h2>
+            <form>
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <select name="dish">
+                    <option value="dish1">Dish 1</option>
+                    <option value="dish2">Dish 2</option>
+                    <option value="dish3">Dish 3</option>
+                </select>
+                <input type="number" name="quantity" min="1" placeholder="Quantity" required>
+                <button type="submit">Order Now</button>
+            </form>
+        </div>
     </div>
 
-    <script>
-        async function fetchData() {
-            const year = document.getElementById('year').value;
-            const round = document.getElementById('round').value;
-
-            if (!year || isNaN(year)) {
-                document.getElementById('results').innerText = 'Please enter a valid year.';
-                return;
-            }
-
-            let url = `https://ergast.com/api/f1/${year}`;
-            if (round && !isNaN(round)) {
-                url += `/${round}`;
-            }
-            url += '.json';
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch');
-                }
-                const data = await response.json();
-                renderResults(data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('results').textContent = `Error fetching data: ${error.message}`;
-            }
-        }
-
-        function renderResults(data) {
-            const races = data.MRData?.RaceTable?.Races || [];
-            if (races.length === 0) {
-                document.getElementById('results').textContent = 'No race data available for the specified criteria.';
-                return;
-            }
-
-            let html = '<table><thead><tr><th>Race Name</th><th>Date</th><th>Location</th></tr></thead><tbody>';
-            races.forEach(race => {
-                const raceUrl = race.url ? race.url : '#';
-                html += `
-                    <tr>
-                        <td><a href="${raceUrl}" target="_blank">${race.raceName}</a></td>
-                        <td>${race.date}</td>
-                        <td>${race.Circuit.Location.locality}, ${race.Circuit.Location.country}</td>
-                    </tr>
-                `;
-            });
-            html += '</tbody></table>';
-
-            document.getElementById('results').innerHTML = html;
-        }
-    </script>
 </body>
+
 </html>

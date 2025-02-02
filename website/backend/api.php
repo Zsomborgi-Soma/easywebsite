@@ -21,6 +21,10 @@ if ($uri[count($uri)-1] == "websites"){
     require_once "websites.php";
     websites();
 }
+elseif ($uri[count($uri)-1] == "saveStage") {
+    require_once "saveStage.php";
+    savePage();
+}
 else{
     echo json_encode(["error"=> "Endpoint not found!"]);
 }
