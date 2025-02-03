@@ -35,7 +35,19 @@
 <button id="saveChanges" class="saveChanges">Save changes</button>
 
 
-
+<div id="saveModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Save Changes</h2>
+            <label for="title">Title:</label>
+            <input type="text" id="title" placeholder="Enter title">
+            <label for="theme">Theme:</label>
+            <input type="text" id="theme" placeholder="Enter theme">
+            <label for="description">Description:</label>
+            <textarea id="description" placeholder="Enter description"></textarea>
+            <button id="confirmSave">Confirm</button>
+        </div>
+    </div>
 
 
 
@@ -101,9 +113,58 @@
     })
 
     async function saveStageFunc() {
-        const url = "http://localhost/easywebsite/website/backend/api.php/saveStage";
-        try {
+        if (localStorage.getItem("websiteID")){
+            savePage();
+        }
+        else{
+            const confirmSave = document.getElementById("confirmSave");
+            const modal = document.getElementById("saveModal");
+            modal.style.display = "flex"
+            confirmSave.addEventListener("click", async function () {
+            const title = document.getElementById("title").value;
+            const theme = document.getElementById("theme").value;
+            const description = document.getElementById("description").value;
             
+            const url = "http://localhost/easywebsite/website/backend/api.php/createWebsite";
+            try {
+                const bodyContent = {
+                    title: title,
+                    theme: theme,
+                    description: description
+                };
+                
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(bodyContent),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+                
+                const requestedData = await response.json();
+                localStorage.setItem("websiteID", requestedData.ID)
+                localStorage.setItem("stage", 0)
+                savePage();
+                
+                modal.style.display = "none";
+
+            } catch (error) {
+                console.error(error.message);
+            }
+        });
+
+        }
+        
+        
+    }
+});
+   async function savePage (){
+        try {
+            const url = "http://localhost/easywebsite/website/backend/api.php/saveStage";
             const bodyContent = {
                 websiteID: localStorage.getItem("websiteID"),
                 stage: parseInt(localStorage.getItem("stage"))+1,
@@ -128,8 +189,6 @@
             console.error(error.message);
         }
     }
-});
-
     </script>
 </body>
 </html>
