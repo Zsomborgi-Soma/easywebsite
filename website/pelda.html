@@ -14,11 +14,11 @@
         h1, h2 {
             color: #ff1801; /* F1 color theme red */
         }
-        label, input, button {
+        label, input, button, select {
             display: block;
             margin: 10px 0;
         }
-        input {
+        input, select {
             width: 100%;
             padding: 10px;
             border: 1px solid #555;
@@ -78,10 +78,20 @@
         <h1>F1 Data Viewer</h1>
         <div class="input-group">
             <label for="year">Year:</label>
-            <input type="text" id="year" placeholder="e.g., 2023">
+            <input type="text" id="year" placeholder="e.g., 2023" onchange="populateTeamsAndCircuits()">
 
             <label for="round">Round (optional):</label>
             <input type="text" id="round" placeholder="e.g., 1">
+
+            <label for="team">Team (optional):</label>
+            <select id="team">
+                <option value="">All Teams</option>
+            </select>
+
+            <label for="circuit">Circuit (optional):</label>
+            <select id="circuit">
+                <option value="">All Circuits</option>
+            </select>
 
             <button onclick="fetchData()">Fetch F1 Data</button>
         </div>
@@ -91,9 +101,56 @@
     </div>
 
     <script>
+        async function populateTeamsAndCircuits() {
+            const year = document.getElementById('year').value;
+            if (!year || isNaN(year)) return;
+
+            const teamsUrl = `https://ergast.com/api/f1/${year}/constructors.json`;
+            const circuitsUrl = `https://ergast.com/api/f1/${year}/circuits.json`;
+
+            try {
+                const [teamsResponse, circuitsResponse] = await Promise.all([
+                    fetch(teamsUrl),
+                    fetch(circuitsUrl),
+                ]);
+                if (!teamsResponse.ok || !circuitsResponse.ok) throw new Error('Unable to fetch teams or circuits data.');
+
+                const teamsData = await teamsResponse.json();
+                const circuitsData = await circuitsResponse.json();
+
+                const teams = teamsData.MRData.ConstructorTable.Constructors;
+                const circuits = circuitsData.MRData.CircuitTable.Circuits;
+
+                const teamSelect = document.getElementById('team');
+                teamSelect.innerHTML = '<option value="">All Teams</option>';
+
+                teams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team.constructorId;
+                    option.textContent = team.name;
+                    teamSelect.appendChild(option);
+                });
+
+                const circuitSelect = document.getElementById('circuit');
+                circuitSelect.innerHTML = '<option value="">All Circuits</option>';
+
+                circuits.forEach(circuit => {
+                    const option = document.createElement('option');
+                    option.value = circuit.circuitId;
+                    option.textContent = circuit.circuitName;
+                    circuitSelect.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Error fetching teams or circuits:', error);
+            }
+        }
+
         async function fetchData() {
             const year = document.getElementById('year').value;
             const round = document.getElementById('round').value;
+            const team = document.getElementById('team').value;
+            const circuit = document.getElementById('circuit').value;
 
             if (!year || isNaN(year)) {
                 document.getElementById('results').innerText = 'Please enter a valid year.';
@@ -104,12 +161,18 @@
             if (round && !isNaN(round)) {
                 url += `/${round}`;
             }
-            url += '.json';
+            if (team) {
+                url += `/constructors/${team}`;
+            }
+            if (circuit) {
+                url += `/circuits/${circuit}`;
+            }
+            url += '/results.json';
 
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error('Data not found for the specified year and round.');
+                    throw new Error('Data not found for the specified criteria.');
                 }
                 const data = await response.json();
                 renderResults(data);
@@ -126,16 +189,19 @@
                 return;
             }
 
-            let html = '<table><thead><tr><th>Race Name</th><th>Date</th><th>Location</th></tr></thead><tbody>';
+            let html = '<table><thead><tr><th>Race Name</th><th>Date</th><th>Location</th><th>Team</th></tr></thead><tbody>';
             races.forEach(race => {
-                const raceUrl = race.url ? race.url : '#';
-                html += `
-                    <tr>
-                        <td><a href="${raceUrl}" target="_blank">${race.raceName}</a></td>
-                        <td>${race.date}</td>
-                        <td>${race.Circuit.Location.locality}, ${race.Circuit.Location.country}</td>
-                    </tr>
-                `;
+                race.Results.forEach(result => {
+                    const raceUrl = race.url ? race.url : '#';
+                    html += `
+                        <tr>
+                            <td><a href="${raceUrl}" target="_blank">${race.raceName}</a></td>
+                            <td>${race.date}</td>
+                            <td>${race.Circuit.Location.locality}, ${race.Circuit.Location.country}</td>
+                            <td>${result.Constructor.name}</td>
+                        </tr>
+                    `;
+                });
             });
             html += '</tbody></table>';
 
