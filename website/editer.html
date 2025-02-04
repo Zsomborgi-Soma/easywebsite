@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Webpage with Print Feature</title>
+    <title>Register Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -10,57 +10,72 @@
             padding: 0;
             background-color: #f4f4f9;
             color: #333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        header {
-            background-color: #5c6bc0;
+        
+        .register-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 80%;
+            text-align: center;
+        }
+        
+        .register-container h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        
+        .register-container input {
+            width: calc(100% - 30px);
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .register-container input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .register-container button {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #007bff;
             color: white;
-            padding: 10px 0;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-            text-align: center;
-        }
-        footer {
-            background-color: #5c6bc0;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             width: 100%;
         }
-        button {
-            padding: 10px 20px;
-            color: white;
-            background-color: #333;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #555;
+        
+        .register-container button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Enhanced Webpage</h1>
-    </header>
-    
-    <main>
-        <h2>Click the button below to print this page:</h2>
-        <button onclick="printPage()">Print This Page</button>
-    </main>
-    
-    <footer>
-        <p>&copy; 2023 Your Website</p>
-    </footer>
-    
-    <script>
-        function printPage() {
-            window.print();
-        }
-    </script>
+    <div class="register-container">
+        <h1>Register</h1>
+        <form>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirm-password" placeholder="Confirm Password" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
 </body>
 </html>

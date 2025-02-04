@@ -14,8 +14,8 @@
             <a href="./prompt.php">craft</a>
         </div>
         <div class="menu-right">
-            <a href="#">Bejelentkezés</a>
-            <a href="#">Regisztráció</a>
+            <a href="./login.html">Bejelentkezés</a>
+            <a href="./register.html">Regisztráció</a>
         </div>
     </div>
     <div class="container">
@@ -65,7 +65,7 @@
 
 
         async function getData() {
-        const url = "http://localhost/easywebsite/website/backend/api.php/websites";
+        const url = "http://localhost/amos/easywebsite/website/backend/api.php/websites";
         try {
             const response = await fetch(url, {
                 method: "POST",
