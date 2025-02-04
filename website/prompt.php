@@ -125,7 +125,7 @@
             const theme = document.getElementById("theme").value;
             const description = document.getElementById("description").value;
             
-            const url = "http://localhost/amos/easywebsite/website/backend/api.php/createWebsite";
+            const url = "http://localhost/easywebsite/website/backend/api.php/createWebsite";
             try {
                 const bodyContent = {
                     title: title,
@@ -164,7 +164,7 @@
 });
    async function savePage (){
         try {
-            const url = "http://localhost/amos/easywebsite/website/backend/api.php/saveStage";
+            const url = "http://localhost/easywebsite/website/backend/api.php/saveStage";
             const bodyContent = {
                 websiteID: localStorage.getItem("websiteID"),
                 stage: parseInt(localStorage.getItem("stage"))+1,
