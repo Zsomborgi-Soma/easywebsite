@@ -11,10 +11,48 @@
 
             <input type="text" id="username" name="username" placeholder="Username" required>
             <input type="password" id="password" name="password" placeholder="Password" required>
-            <button>Login</button>
+            <button id="login" >Login</button>
         
     </div>
     <script>
+        document.getElementById("login").addEventListener("click", async (event) => {
+        event.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        await login(username, password);
+        
+        })
+        async function login(username, password) {
+        const bodyContent = {
+            username: username,
+            password: password}
+        console.log("Request Body:", bodyContent); // Log the request body for debugging
+        try {
+            const url = "http://localhost:5000/login";
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(bodyContent),
+            });
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+            let res = await response.json();
+            if (res.error) {
+                alert(res.error);
+            } else {
+                alert(res.message);
+                localStorage.setItem("authToken", res.token);
+                localStorage.setItem("userID", res.userID);
+                window.location.href = "./loggedIn.html";
+            }
+        } catch (error) {
+            alert(error.message);}
+
+        }
+
         
 
 

@@ -14,10 +14,7 @@
             <a href="#">Kártyák</a>
             <a href="./prompt.php">craft</a>
         </div>
-        <div class="menu-right">
-            <a href="./login.html">Bejelentkezés</a>
-            <a href="./register.html">Regisztráció</a>
-        </div>
+
     </div>
     <div class="container">
         <div class="search-bar">
@@ -37,6 +34,17 @@
     </div>
     
     <script>
+        function checkLoginStatus() {
+            // Example: Check for a token in localStorage
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                // Redirect to login page if not logged in
+                window.location.href = "./login.html";
+            }
+        }
+
+        // Call the function to check login status
+        checkLoginStatus();
         
         try {
             fetch("http://localhost:5000/get-file", {

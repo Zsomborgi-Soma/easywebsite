@@ -13,11 +13,21 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+const db = await mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+});
+
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
+
+app.use(cors());
+app.use(express.json());
+
+
 
 app.post("/api/chat", async (req, res) => {
     try {
@@ -46,28 +56,54 @@ app.post("/update-html", (req, res) => {
 });
 
 
-const db = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-});
+
 
 // **User Registration**
+// **User Registration (with Email)**
 app.post("/register", async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { email, username, password, confirmPassword } = req.body;
+        const validate = validateRegistration(email,username,password,confirmPassword)
+        if (validate){
+            return res.status(400).json({ message: validate});
+        }
+        // Check if email or username already exists
+        const [existingUser] = await db.query(
+            "SELECT * FROM users WHERE email = ? OR username = ?",
+            [email, username]
+        );
+
+        if (existingUser.length > 0) {
+            return res.status(400).json({ message: "Email or Username already exists" });
+        }
+
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const [existingUser] = await db.query("SELECT * FROM users WHERE username = ?", [username]);
-        if (existingUser.length > 0) return res.status(400).json({ message: "Username already exists" });
+        // Insert new user
+        await db.query(
+            "INSERT INTO users (email, username, password) VALUES (?, ?, ?)",
+            [email, username, hashedPassword]
+        );
 
-        await db.query("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashedPassword]);
         res.json({ message: "User registered successfully" });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
+function validateRegistration(email, username, password, confirmPassword) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[a-zA-Z0-9_]{3,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (password != confirmPassword){ return "The passwords are not the same"}
+    if (!emailRegex.test(email)) return "Invalid email format";
+    if (!usernameRegex.test(username)) return "Username must be at least 3 characters";
+    if (!passwordRegex.test(password)) return "Password must be at least 8 characters with 1 uppercase and 1 number";
+
+    return null; // Valid data
+}
+
 
 // **User Login**
 app.post("/login", async (req, res) => {
@@ -86,6 +122,7 @@ app.post("/login", async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 // **Insert a New Website**
 app.post("/add-website", async (req, res) => {

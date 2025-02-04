@@ -8,13 +8,56 @@
 <body>
     <div class="register-container">
         <h1>Register</h1>
-        <form>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="password" name="confirm-password" placeholder="Confirm Password" required>
-            <button type="submit">Register</button>
-        </form>
+        
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+            <button id="register">Register</button>
+        
     </div>
+    <script>
+        document.getElementById("register").addEventListener("click", async (event) => {
+        event.preventDefault();
+        const email = document.getElementById("email").value;
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
+        await register(email, username, password, confirmPassword);
+    });
+
+    async function register(email, username, password, confirmPassword) {
+        const bodyContent = {
+            email: email,
+            username: username,
+            password: password,
+            confirmPassword: confirmPassword
+        };
+        console.log("Request Body:", bodyContent); // Log the request body for debugging
+        try {
+            const url = "http://localhost:5000/register";
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(bodyContent),
+            });
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            let res = await response.json();
+            if (res.error) {
+                alert(res.error);
+            } else {
+                alert(res.message);
+                window.location.href = "./login.html";
+            }
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+    </script>
 </body>
 </html>
