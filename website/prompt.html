@@ -53,6 +53,17 @@
 
     <script type="module" src="index.js"></script>
     <script>
+        function checkLoginStatus() {
+            // Example: Check for a token in localStorage
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                // Redirect to login page if not logged in
+                window.location.href = "./login.html";
+            }
+        }
+
+        // Call the function to check login status
+        checkLoginStatus();
 
     document.addEventListener("DOMContentLoaded", function () {
     const textarea = document.getElementById("user-input");
@@ -125,7 +136,7 @@
             const theme = document.getElementById("theme").value;
             const description = document.getElementById("description").value;
             
-            const url = "http://localhost/easywebsite/website/backend/api.php/createWebsite";
+            const url = "http://localhost:5000/add-website";
             try {
                 const bodyContent = {
                     title: title,
@@ -164,7 +175,7 @@
 });
    async function savePage (){
         try {
-            const url = "http://localhost/easywebsite/website/backend/api.php/saveStage";
+            const url = "http://localhost:5000/add-page";
             const bodyContent = {
                 websiteID: localStorage.getItem("websiteID"),
                 stage: parseInt(localStorage.getItem("stage"))+1,

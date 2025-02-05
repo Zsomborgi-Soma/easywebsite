@@ -162,5 +162,34 @@ app.get("/get-pages/:websiteID", async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+app.post("/get-pages", async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                w.userID, 
+                w.title, 
+                w.theme, 
+                w.description, 
+                w.ID AS websiteID, 
+                s.stage, 
+                s.code 
+            FROM websites w
+            JOIN stages s ON w.ID = s.websiteID
+            WHERE s.stage = (
+                SELECT MAX(stage) 
+                FROM stages 
+                WHERE websiteID = w.ID
+            );
+        `;
+
+        const [rows] = await db.query(query);
+
+
+        return JSON.stringify(rows, null, 2);
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+    
+});
 
 app.listen(5000, () => console.log("Server running on port 5000"));
