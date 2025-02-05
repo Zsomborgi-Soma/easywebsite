@@ -128,9 +128,10 @@ app.post("/login", async (req, res) => {
 app.post("/add-website", async (req, res) => {
     try {
         const { userID, title, theme, description } = req.body;
-        await db.query("INSERT INTO websites (userID, title, theme, description) VALUES (?, ?, ?, ?)", 
+        const [result] = await db.query("INSERT INTO websites (userID, title, theme, description) VALUES (?, ?, ?, ?)", 
             [userID, title, theme, description]);
-        res.json({ message: "Website added successfully" });
+        const insertedID = result.insertId;
+        res.json({ message: "Website added successfully" , websiteID: insertedID});
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -183,13 +184,25 @@ app.post("/get-pages", async (req, res) => {
         `;
 
         const [rows] = await db.query(query);
-
-
-        return JSON.stringify(rows, null, 2);
+        res.json(rows);
+        
             } catch (err) {
                 res.status(500).json({ error: err.message });
             }
     
 });
+
+app.post ("/get-user-pages", async (req, res) => {
+    try {
+        const {userID} = req.body;
+        const sql = `SELECT websites.title, websites.theme, websites.description, stages.websiteID, stages.stage, stages.code
+        from websites, stages
+        where websites.ID = stages.websiteID and websites.userID = ?;`;
+        const [rows] = await db.query(sql, [userID]);
+        res.json(rows);
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 app.listen(5000, () => console.log("Server running on port 5000"));

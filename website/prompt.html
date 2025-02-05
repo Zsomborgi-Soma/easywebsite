@@ -10,7 +10,7 @@
 <body>
 <body>
     <div class="menu">
-        <a href="./index.html">Home</a>
+        <a href="./loggedIn.html">Home</a>
         <a href="#">About</a>
         <a href="#">Contact</a>
     </div>
@@ -139,6 +139,7 @@
             const url = "http://localhost:5000/add-website";
             try {
                 const bodyContent = {
+                    userID: localStorage.getItem("userID"),
                     title: title,
                     theme: theme,
                     description: description
@@ -157,7 +158,7 @@
                 }
                 
                 const requestedData = await response.json();
-                localStorage.setItem("websiteID", requestedData.ID)
+                localStorage.setItem("websiteID", requestedData.websiteID)
                 localStorage.setItem("stage", 0)
                 savePage();
                 

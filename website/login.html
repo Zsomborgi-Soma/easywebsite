@@ -40,12 +40,13 @@
                 throw new Error(`Response status: ${response.status}`);
             }
             let res = await response.json();
+            console.log(res);
             if (res.error) {
                 alert(res.error);
             } else {
-                alert(res.message);
                 localStorage.setItem("authToken", res.token);
                 localStorage.setItem("userID", res.userID);
+                console.log(res);
                 window.location.href = "./loggedIn.html";
             }
         } catch (error) {
