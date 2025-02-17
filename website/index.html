@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
@@ -11,11 +12,11 @@
         <div class="menu-left">
             <a href="#">Főoldal</a>
             <a href="#">Kártyák</a>
-            <a href="./prompt.php">craft</a>
+            <a href="./prompt.html">craft</a>
         </div>
         <div class="menu-right">
-            <a href="#">Bejelentkezés</a>
-            <a href="#">Regisztráció</a>
+            <a href="./login.html">Bejelentkezés</a>
+            <a href="./register.html">Regisztráció</a>
         </div>
     </div>
     <div class="container">
@@ -36,6 +37,9 @@
     </div>
     
     <script>
+        
+    
+
         localStorage.clear()
         getData()
         let options = []
@@ -65,7 +69,7 @@
 
 
         async function getData() {
-        const url = "http://localhost/easywebsite/website/backend/api.php/websites";
+        const url = "http://localhost:5000/get-pages";
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -80,8 +84,8 @@
             }
 
             
-            requestedData = await response.json();
-            counter = 0
+            let requestedData = await response.json();
+            let counter = 0
             console.log(requestedData)
             listing(requestedData)
             

@@ -3,6 +3,7 @@ use easywebsite;
 
 create table users(
     ID int PRIMARY KEY AUTO_INCREMENT,
+    email varchar(255),
     username varchar(255),
     password varchar(255)
 );
@@ -24,8 +25,8 @@ CREATE TABLE stages(
     FOREIGN KEY (websiteID) REFERENCES websites(ID)
 );
 
-INSERT INTO users(username,password)
-VALUES ("admin","adminpassword");
+INSERT INTO users(username,email,password)
+VALUES ("admin","xdcumo@gmail.com","adminpassword");
 
 INSERT INTO websites(userID,title,theme,description)
 VALUES (1,"f1","f1","creating test");

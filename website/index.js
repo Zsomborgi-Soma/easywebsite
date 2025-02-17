@@ -14,6 +14,7 @@ else{
 }
 
 
+
 async function sendMessage() {
     const userInput = document.getElementById("user-input").value;
 

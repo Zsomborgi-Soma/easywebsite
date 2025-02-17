@@ -23,6 +23,7 @@ function websites(){
                 }
             }
         }
+        $conn->close();
 
         echo json_encode($highestElem);
         
@@ -30,6 +31,7 @@ function websites(){
     }
     else{
         echo json_encode(["error"=>"xd"]);
+        $conn->close();
     }
 
 
